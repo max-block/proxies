@@ -1,0 +1,14 @@
+servers:
+  hosts:
+    "proxies.example.net":
+      app: proxies
+      domain: proxies.example.net
+      app_image: ghcr.io/max-block/proxies
+      db_password: secret
+      access_token: secret
+      app_extra_ports: []
+
+  vars:
+      docker_registry: ghcr.io
+      docker_username: max-block
+      docker_password: secret

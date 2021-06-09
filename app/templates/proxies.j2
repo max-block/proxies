@@ -1,0 +1,23 @@
+{% extends "inc/base.j2" %}
+{% block content %}
+  <h3>proxies</h3>
+
+  <table class="table table-sm">
+    <tr>
+      <th>host</th>
+      <th>status</th>
+      <th>checked_at</th>
+      <th>check</th>
+      <th>view</th>
+    </tr>
+    {% for p in proxies %}
+      <tr>
+        <td>{{ p.host }}</td>
+        <td>{{ p.status.value }}</td>
+        <td>{{ p.checked_at | dt }}</td>
+        <td><a href="/api-link?method=post&url=/api/proxies/{{ p.id }}/check">check</a></td>
+        <td><a href="/api/proxies/{{ p.id }}">view</a></td>
+      </tr>
+    {% endfor %}
+  </table>
+{% endblock %}

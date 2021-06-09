@@ -1,0 +1,26 @@
+{% extends "inc/base.j2" %}
+{% block content %}
+  <div class="d-flex align-items-center">
+    <h3 class="me-5">groups</h3>
+  </div>
+  <br>
+
+  <table class="table table-sm">
+    <tr>
+      <th>name</th>
+      <th>type</th>
+      <th>checked_at</th>
+      <th>check</th>
+      <th>view</th>
+    </tr>
+    {% for g in groups %}
+      <tr>
+        <td>{{ g.name }}</td>
+        <td>{{ g.type.value }}</td>
+        <td>{{ g.checked_at | dt }}</td>
+        <td><a href="/api-link?method=post&url=/api/groups/{{ g.id }}/check">check</a></td>
+        <td><a href="/api/groups/{{ g.id }}">view</a></td>
+      </tr>
+    {% endfor %}
+  </table>
+{% endblock %}
