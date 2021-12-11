@@ -22,6 +22,10 @@ def init(app: App) -> APIRouter:
         query = make_query(status=status, group=group, type=type_, host=host)
         return app.db.proxy.find(query, "-checked_at", limit)
 
+    @router.delete("")
+    def delete_all_proxies():
+        app.db.proxy.delete_many({})
+
     @router.post("/{pk}/check")
     def check_proxy(pk):
         return app.proxy_service.check_proxy(pk)
