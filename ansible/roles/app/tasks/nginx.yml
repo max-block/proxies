@@ -1,5 +1,5 @@
-- name: Copy nginx.yml (docker-compose)
-  template: src=nginx.yml dest=/etc/nginx.yml
+- file: path=/apps/nginx state=directory
 
-- name: Deploy nginx docker stack
-  docker_stack: name=nginx compose=/etc/nginx.yml
+- template: src=nginx.yml dest=/apps/nginx/docker-compose.yml
+
+- docker_compose: project_name=nginx project_src=/apps/nginx restarted=yes

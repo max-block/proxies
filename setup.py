@@ -28,7 +28,7 @@ def load_requirements(f_name: str) -> list:
 setuptools.setup(
     name="app",
     version=find_version("app/__init__.py"),
-    python_requires=">=3.9",
+    python_requires=">=3.10",
     packages=["app"],
     install_requires=load_requirements("requirements.txt"),
     extras_require={"dev": load_requirements("requirements-dev.txt")},

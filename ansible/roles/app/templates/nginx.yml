@@ -1,8 +1,10 @@
-version: '3.7'
+version: "3.7"
 
 services:
   nginx-proxy:
+#    container_name: nginx-proxy
     image: jwilder/nginx-proxy:latest
+    restart: always
     ports:
       - 443:443
       - 80:80
@@ -23,7 +25,9 @@ services:
         max-size: 10m
 
   nginx-proxy-letsencrypt:
+#    container_name: letsencrypt-nginx-proxy-companion
     image: jrcs/letsencrypt-nginx-proxy-companion:latest
+    restart: always
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - certs:/etc/nginx/certs

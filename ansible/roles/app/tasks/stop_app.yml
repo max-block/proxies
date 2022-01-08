@@ -1,0 +1,1 @@
+- docker_compose: project_name={{ app }} project_src=/apps/{{ app }} state=present stopped=yes services=["app"]

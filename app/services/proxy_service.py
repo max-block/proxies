@@ -1,4 +1,4 @@
-from mb_commons import ParallelTasks, hrequest, md, utc_delta, utc_now
+from mb_std import ParallelTasks, hrequest, md, utc_delta, utc_now
 from wrapt import synchronized
 
 from app.models import ProxyStatus
@@ -16,7 +16,10 @@ class ProxyService(AppService):
         updated = {"status": status, "checked_at": utc_now()}
         if status == ProxyStatus.OK:
             updated["last_ok_at"] = utc_now()
-        self.db.proxy.update_by_id(pk, {"$set": updated})
+
+        proxy = self.db.proxy.find_by_id_and_update(pk, {"$set": updated})
+        if proxy.delete_me():
+            self.db.proxy.delete_by_id(pk)
         return updated
 
     @synchronized

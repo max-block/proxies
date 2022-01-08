@@ -1,2 +1,1 @@
-- name: Prune docker images
-  docker_prune: images=True
+- docker_prune: images=True

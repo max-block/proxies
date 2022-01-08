@@ -1,6 +1,6 @@
 import re
 
-from mb_commons import hrequest, utc_delta, utc_now
+from mb_std import hrequest, utc_delta, utc_now
 from pymongo.errors import BulkWriteError
 from wrapt import synchronized
 

@@ -1,8 +1,6 @@
-from typing import Optional
-
 from fastapi import APIRouter, Query
-from mb_commons import utc_delta
-from mb_commons.mongo import make_query
+from mb_std import utc_delta
+from mb_std.mongo import make_query
 
 from app.app import App
 from app.models import ProxyStatus, ProxyType
@@ -13,10 +11,10 @@ def init(app: App) -> APIRouter:
 
     @router.get("")
     def get_proxies(
-        status: Optional[ProxyStatus] = None,
-        group: Optional[str] = None,
-        type_: Optional[ProxyType] = Query(None, alias="type"),
-        host: Optional[str] = None,
+        status: ProxyStatus | None = None,
+        group: str | None = None,
+        type_: ProxyType | None = Query(None, alias="type"),
+        host: str | None = None,
         limit: int = 100,
     ):
         query = make_query(status=status, group=group, type=type_, host=host)

@@ -7,6 +7,15 @@
 - include_tasks: update.yml
   when: playbook_action == "update"
 
+- include_tasks: restart.yml
+  when: playbook_action == "restart"
+
+- include_tasks: stop.yml
+  when: playbook_action == "stop"
+
+- include_tasks: stop_app.yml
+  when: playbook_action == "stop_app"
+
 - include_tasks: delete.yml
   when: playbook_action == "delete"
 

@@ -1,23 +1,31 @@
 {% extends "inc/base.j2" %}
 {% block content %}
-  <h3>proxies</h3>
+  <div class="menu">
+    <h3>proxies / {{ proxies | length }}</h3>
+  </div>
 
-  <table class="table table-sm">
+  <table class="table table-sm table-hover sortable">
+    <thead>
     <tr>
       <th>host</th>
       <th>status</th>
       <th>checked_at</th>
+      <th>last_ok_at</th>
       <th>check</th>
       <th>view</th>
     </tr>
+    </thead>
+    <tbody>
     {% for p in proxies %}
       <tr>
         <td>{{ p.host }}</td>
         <td>{{ p.status.value }}</td>
         <td>{{ p.checked_at | dt }}</td>
+        <td>{{ p.last_ok_at | dt }}</td>
         <td><a href="/api-link?method=post&url=/api/proxies/{{ p.id }}/check">check</a></td>
         <td><a href="/api/proxies/{{ p.id }}">view</a></td>
       </tr>
     {% endfor %}
+    </tbody>
   </table>
 {% endblock %}

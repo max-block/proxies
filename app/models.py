@@ -2,10 +2,9 @@ from __future__ import annotations
 
 from datetime import datetime
 from enum import Enum, unique
-from typing import Optional
 
-from mb_commons import utc_now
-from mb_commons.mongo import MongoModel, ObjectIdStr
+from mb_std import utc_delta, utc_now
+from mb_std.mongo import MongoModel, ObjectIdStr
 from pydantic import BaseModel, Field, HttpUrl
 from pymongo import IndexModel
 
@@ -24,15 +23,15 @@ class ProxyStatus(str, Enum):
 
 
 class Group(MongoModel):
-    id: Optional[ObjectIdStr] = Field(None, alias="_id")
+    id: ObjectIdStr | None = Field(None, alias="_id")
     name: str
     link: HttpUrl
-    username: Optional[str] = None
-    password: Optional[str] = None
+    username: str | None = None
+    password: str | None = None
     port: int
     type: ProxyType
     created_at: datetime = Field(default_factory=utc_now)
-    checked_at: Optional[datetime]
+    checked_at: datetime | None
 
     __collection__ = "group"
     __indexes__ = [
@@ -46,25 +45,13 @@ class Group(MongoModel):
 class GroupCreate(BaseModel):
     name: str
     link: HttpUrl = None
-    username: Optional[str] = None
-    password: Optional[str] = None
+    username: str | None = None
+    password: str | None = None
     port: int
     type: ProxyType
 
 
 class Proxy(MongoModel):
-    id: Optional[ObjectIdStr] = Field(None, alias="_id")
-    group: str  # Group.name
-    type: ProxyType
-    status: ProxyStatus = ProxyStatus.UNKNOWN
-    username: str
-    password: str
-    host: str
-    port: int
-    created_at: datetime = Field(default_factory=utc_now)
-    checked_at: Optional[datetime]
-    last_ok_at: Optional[datetime]
-
     __collection__ = "proxy"
     __indexes__ = [
         IndexModel("host", unique=True),
@@ -75,11 +62,29 @@ class Proxy(MongoModel):
         IndexModel("checked_at"),
         IndexModel("last_ok_at"),
     ]
+    id: ObjectIdStr | None = Field(None, alias="_id")
+    group: str  # Group.name
+    type: ProxyType
+    status: ProxyStatus = ProxyStatus.UNKNOWN
+    username: str
+    password: str
+    host: str
+    port: int
+    created_at: datetime = Field(default_factory=utc_now)
+    checked_at: datetime | None = None
+    last_ok_at: datetime | None = None
 
     @property
     def url(self):
         schema = "socks5" if self.type == ProxyType.SOCKS5 else "http"
         return f"{schema}://{self.username}:{self.password}@{self.host}:{self.port}"
+
+    def delete_me(self) -> bool:
+        if self.last_ok_at and self.last_ok_at > utc_delta(hours=-1):
+            return False
+        if self.created_at > utc_delta(hours=-1):
+            return False
+        return True
 
     @classmethod
     def from_group(cls, group: Group, host: str) -> Proxy:
