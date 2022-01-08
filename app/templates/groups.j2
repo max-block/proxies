@@ -15,12 +15,21 @@
     </tr>
     {% for g in groups %}
       <tr>
-        <td>{{ g.name }}</td>
+        <td>{{ g.id }}</td>
         <td>{{ g.type.value }}</td>
         <td>{{ g.checked_at | dt }}</td>
         <td><a href="/api-link?method=post&url=/api/groups/{{ g.id }}/check">check</a></td>
         <td><a href="/api/groups/{{ g.id }}">view</a></td>
       </tr>
     {% endfor %}
-  </table>
+  </table><br>
+
+  <hr>
+
+  <section>
+    <h4>create group</h4>
+    {{ simple_form(form, submit="create") }}
+  </section>
+
+
 {% endblock %}

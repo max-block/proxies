@@ -31,6 +31,10 @@ class GroupService(AppService):
         self.db.group.update_by_id(pk, {"$set": {"checked_at": utc_now()}})
         return {"hosts": hosts}
 
+    def delete(self, pk: str):
+        self.db.proxy.delete_many({"group": pk})
+        return self.db.group.delete_by_id(pk)
+
     @synchronized
     def check_next_group(self):
         group = self.db.group.find_one(

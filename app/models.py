@@ -6,7 +6,6 @@ from enum import Enum, unique
 from mb_std import utc_delta, utc_now
 from mb_std.mongo import MongoModel, ObjectIdStr
 from pydantic import BaseModel, Field, HttpUrl
-from pymongo import IndexModel
 
 
 @unique
@@ -23,23 +22,16 @@ class ProxyStatus(str, Enum):
 
 
 class Group(MongoModel):
-    id: ObjectIdStr | None = Field(None, alias="_id")
-    name: str
+    __collection__ = "group"
+    __indexes__ = ["!link", "created_at", "checked_at"]
+    id: str = Field(..., alias="_id")
     link: HttpUrl
     username: str | None = None
     password: str | None = None
     port: int
     type: ProxyType
     created_at: datetime = Field(default_factory=utc_now)
-    checked_at: datetime | None
-
-    __collection__ = "group"
-    __indexes__ = [
-        IndexModel("name", unique=True),
-        IndexModel("link", unique=True),
-        IndexModel("created_at"),
-        IndexModel("checked_at"),
-    ]
+    checked_at: datetime | None = None
 
 
 class GroupCreate(BaseModel):
@@ -53,17 +45,9 @@ class GroupCreate(BaseModel):
 
 class Proxy(MongoModel):
     __collection__ = "proxy"
-    __indexes__ = [
-        IndexModel("host", unique=True),
-        IndexModel("group"),
-        IndexModel("status"),
-        IndexModel("type"),
-        IndexModel("created_at"),
-        IndexModel("checked_at"),
-        IndexModel("last_ok_at"),
-    ]
+    __indexes__ = ["!host", "group", "status", "type", "created_at", "checked_at", "last_ok_at"]
     id: ObjectIdStr | None = Field(None, alias="_id")
-    group: str  # Group.name
+    group: str
     type: ProxyType
     status: ProxyStatus = ProxyStatus.UNKNOWN
     username: str
@@ -89,7 +73,7 @@ class Proxy(MongoModel):
     @classmethod
     def from_group(cls, group: Group, host: str) -> Proxy:
         return Proxy(
-            group=group.name,
+            group=group.id,
             type=group.type,
             username=group.username,
             password=group.password,

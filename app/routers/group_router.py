@@ -21,7 +21,7 @@ def init(app: App) -> APIRouter:
 
     @router.delete("/{pk}")
     def delete_group(pk):
-        return app.db.group.delete_by_id(pk)
+        return app.group_service.delete(pk)
 
     @router.post("/{pk}/check")
     def check_group(pk):
